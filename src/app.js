@@ -13,6 +13,10 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan(morganOption));
 
+const noteRouter = require("./notes-route");
+const folderRouter = require("./folders-route");
+app.use("/notes", noteRouter);
+app.use("/folders", folderRouter);
 
 // eslint-disable-next-line no-unused-vars
 app.use(function errorHandler(error, req, res, next) {
