@@ -16,7 +16,6 @@ app.use(morgan(morganOption));
 const noteRouter = require("./notes-route");
 const folderRouter = require("./folders-route");
 app.use(function requireAuth(req, res, next) {
-  console.log("TESTING");
   const authValue = req.get("Authorization");
 
   //verify bearer
