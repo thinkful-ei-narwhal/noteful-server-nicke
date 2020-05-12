@@ -13,7 +13,7 @@ const FolderServices = {
       });
   },
   deleteFolder(db, id) {
-    return db.select("*").from(folderName).where({ id }).delete();
+    return db(folderName).where({ id }).delete();
   },
   updateNote(db, id, newFolderFields) {
     return db.from(folderName).where({ id }).update(newFolderFields);

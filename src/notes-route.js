@@ -4,12 +4,13 @@ const xss = require("xss");
 const NotesService = require("./noteservices");
 const notesRouter = express.Router();
 const jsonParser = express.json();
+const UuidGen = require("./uuidGen");
 
 const serializeNote = note => ({
   id: note.id,
-  note_name: xss(note.note_name),
+  name: xss(note.name),
   modified: note.modified,
-  folderId: note.folderId,
+  folderId: note.folderid,
   content: xss(note.content)
 });
 
@@ -22,12 +23,41 @@ notesRouter.route("/")
         })
       .catch(next);
   })
-  .post(jsonParser, (req, res) => {
-    res.send("NOICE");
+  .post(jsonParser, (req, res, next) => {
+    const uuid = UuidGen.create_integerUUID();
+    const { name, modified, folderId, content } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        error: { message: "Missing name in the request body" }
+      });
+    }
+
+    if (!folderId) {
+      return res.status(400).json({
+        error: { message: "Missing folderId in the request body" }
+      });
+    }
+
+    const noteObj = {
+      id: uuid,
+      name: name,
+      modified: modified,
+      folderId: folderId,
+      content: content
+    };
+
+    NotesService.insertNote(req.app.get("db"), noteObj)
+      .then(note => {
+        res.status(201)
+          .location(path.posix.join(req.originalUrl, `/${note.id}`))
+          .json(serializeNote(note));
+      })
+      .catch(next);
   });
 
 
-notesRouter.route("/:nodeId")
+notesRouter.route("/:noteId")
   .all((req, res, next) => {
     NotesService.getNoteById(req.app.get("db"), req.params.noteId)
       .then(note => {
@@ -49,7 +79,7 @@ notesRouter.route("/:nodeId")
   .delete((req, res, next) => {
     NotesService.deleteNote(req.app.get("db"), req.params.noteId)
       .then(runRowsAffected => {
-        res.status.end();
+        res.status(204).end();
       })
       .catch(next);
   });
