@@ -9,6 +9,7 @@ const UuidGen = require("./uuidGen");
 const serializeNote = note => ({
   id: note.id,
   name: xss(note.name),
+  modified: note.modified,
   folderId: note.folderid,
   content: xss(note.content)
 });
