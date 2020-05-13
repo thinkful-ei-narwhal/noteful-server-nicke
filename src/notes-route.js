@@ -41,7 +41,7 @@ notesRouter.route("/")
     const noteObj = {
       id: uuid,
       name: name,
-      folderId: folderId,
+      folderid: folderId,
       content: content
     };
 
