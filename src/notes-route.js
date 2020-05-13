@@ -25,7 +25,7 @@ notesRouter.route("/")
   })
   .post(jsonParser, (req, res, next) => {
     const uuid = UuidGen.create_integerUUID();
-    const { name, modified, folderId, content } = req.body;
+    const { name, folderId, content } = req.body;
 
     if (!name) {
       return res.status(400).json({
@@ -42,7 +42,6 @@ notesRouter.route("/")
     const noteObj = {
       id: uuid,
       name: name,
-      modified: modified,
       folderId: folderId,
       content: content
     };
